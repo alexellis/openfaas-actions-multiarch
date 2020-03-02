@@ -2,16 +2,14 @@ name: CI
 
 on: [push]
 env:
-  DOCKER_REPO: mrsimpson
-  DOCKER_IMAGE: abap-fibonacci
+  DOCKER_REPO: alexellis
+  DOCKER_IMAGE: go-example
   DOCKER_CLI_EXPERIMENTAL: enabled
   TAG: ''
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,13 +26,16 @@ jobs:
           docker buildx install
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Get templates
+        run: |
+          faas-cli template pull stack
       - name: Prepare image build
         run: |
           echo "::set-env name=TAG::$(faas-cli build --shrinkwrap --tag sha | grep -i building | sed "s/.*$IMAGE://" | cut -f1 -d" " | sed -n 2p)"
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: Build multi platform
-        working-directory: './build/abap-fibonacci/'
+        working-directory: './build/go-example/'
         run: |
           docker version && \
           echo ${{ steps.buildx.outputs.platforms }} && \
