@@ -2,7 +2,7 @@ name: CI
 
 on: [push]
 env:
-  DOCKER_REPO: alexellis
+  DOCKER_REPO: alexellis2
   DOCKER_IMAGE: go-example
   DOCKER_CLI_EXPERIMENTAL: enabled
   TAG: ''
